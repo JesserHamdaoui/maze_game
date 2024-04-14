@@ -1,11 +1,12 @@
 import pygame
+import json
 from game.utilities.Object import Object
 from game.utilities.sprite import load_sprite_sheets
 from game.utilities.constants import WHITE
 
 class CoinCounter(Object):
     ANIMATION_DELAY = 3
-    def __init__(self, x, y, size):
+    def __init__(self, x, y, size, coin_count=0):
         super().__init__(x + 32, y + 32, size, size, "coin")
         self.x = x + 32
         self.y = y + 32
@@ -14,10 +15,17 @@ class CoinCounter(Object):
         self.mask = pygame.mask.from_surface(self.image)
         self.animation_count = 0
         self.animation_name = "coin"
-        self.count = 0
+        self.count = coin_count
 
     def increase_count(self, score=1):
         self.count += score
+        # Update the coin count in the game.json file
+        with open('data\game.json', 'r+') as file:
+            data = json.load(file)
+            data['coins'] += score
+            file.seek(0)
+            json.dump(data, file, indent=4)
+            file.truncate()
 
     def draw(self, win):
         win.blit(self.image, (self.rect.x , self.rect.y))

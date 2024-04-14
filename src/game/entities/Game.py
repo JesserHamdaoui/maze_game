@@ -1,4 +1,5 @@
 import pygame
+import json
 from game.utilities.constants import *
 from game.entities.Player import Player
 from game.entities.Block import Block
@@ -57,7 +58,9 @@ class Game:
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             ]
         ]
-        self.player = Player(100, 100, 50, 50, window, main_character)
+        with open('data\game.json', 'r') as file:
+            data = json.load(file)
+            self.player = Player(100, 100, 50, 50, window, data['selected_character'])
         self.enemies_group = pygame.sprite.Group()
         self.fire = Fire(100, HEIGHT - self.block_size - 64, 16, 32)
         self.fire.on()
@@ -66,7 +69,9 @@ class Game:
         self.scroll_area_width = 200
         self.load_level()
         self.healthbar = HealthBar(20, 20, 200, 30, 100)
-        self.coin_counter = CoinCounter(WIDTH - self.block_size * 2, 0, self.block_size)
+        with open('data\game.json', 'r') as file:
+            data = json.load(file)
+            self.coin_counter = CoinCounter(WIDTH - self.block_size * 2, 0, self.block_size, data['coins'])
         self.level_indicator = LevelIndicator(WIDTH - 100, HEIGHT - 30, self.level + 1)
         self.load_overlays(window)
 

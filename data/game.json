@@ -1,0 +1,9 @@
+{
+    "level": 0,
+    "coins": 28,
+    "characters": [
+        "VirtualGuy",
+        "MaskDude"
+    ],
+    "selected_character": "MaskDude"
+}
