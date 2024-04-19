@@ -25,7 +25,7 @@ class ShopItem:
         window.blit(self.sprite, (self.rect.x, self.rect.y))
 
         text_name = font.render(self.name, True, WHITE)
-        with open('data\game.json', 'r') as file:
+        with open('/Users/gastonguelmami/Desktop/maze_game-main/data/game.json', 'r') as file:
             data = json.load(file)
             if self.name in data['characters']:
                 self.price = 0

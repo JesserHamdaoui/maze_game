@@ -11,7 +11,7 @@ pygame.display.set_caption("Maze")
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 
-pygame.mixer.music.load('assets\sounds\\background\music.wav')
+pygame.mixer.music.load('/Users/gastonguelmami/Desktop/maze_game-main/assets/sounds/background/music.wav')
 pygame.mixer.music.play(-1, 0.0, 5000)
 
 if __name__ == "__main__":

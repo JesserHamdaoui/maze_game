@@ -96,15 +96,11 @@ class Player(pygame.sprite.Sprite):
         if self.alive:
             self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
             self.mask = pygame.mask.from_surface(self.sprite)
-        # else:
-            # Player is dead, switch to ghost sprite
-            # self.sprite = self.ghost_image
-            # self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
-            # self.mask = pygame.mask.from_surface(self.sprite)
+        else:
+            self.sprite = self.ghost_image
+            self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
+            self.mask = pygame.mask.from_surface(self.sprite)
 
     def draw(self, win, offset_x):
         if self.alive:
             win.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
-        # else:
-        #     # Draw the ghost image if the player is not alive
-        #     win.blit(self.ghost_image, (self.rect.x - offset_x, self.rect.y))

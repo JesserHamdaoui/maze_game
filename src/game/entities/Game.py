@@ -3,7 +3,10 @@ import json
 from game.utilities.constants import *
 from game.entities.Player import Player
 from game.entities.Block import Block
+from game.entities.Block import Block2
+from game.entities.Block import Block3
 from game.entities.Coin import Coin
+# from game.entities.Heart import Heart
 from game.entities.Checkpoint import Checkpoint
 from game.entities.Enemy import Enemy
 from game.entities.Fire import Fire
@@ -12,53 +15,59 @@ from game.user_interface.CoinCounter import CoinCounter
 from game.user_interface.LevelIndicator import LevelIndicator
 from game.user_interface.Background import Background
 from config.settings import WIDTH, HEIGHT
+from game.utilities.win import win_animation
+
 
 
 class Game:
-    def __init__(self, window, main_character):
+    def __init__(self, window, clock, fps, main_character):
+        self.window = window
+        self.clock = clock
+        self.fps = fps
         self.level = 0
         self.clock = pygame.time.Clock()
-        self.background = Background("Blue.png")
+        self.background = Background("Gray.png")
         self.coins = pygame.sprite.Group()  # Group for coins
         self.block_size = 96
         self.maze_width = WIDTH // self.block_size
         self.maze_height = HEIGHT // self.block_size
         self.mazes = [
             [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 4, 0, 0, 0, 0, 1, 1, 1, 0, 2, 1],
-                [1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0],
-                [1, 0, 0, 2, 0, 1, 2, 1, 1, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1],
-                [1, 2, 1, 0, 0, 1, 0, 2, 0, 0, 1, 3, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,], 
+                [1, 0, 0, 0, 4, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 2, 2, 1, 0, 0, 0, 3,],
+                [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 4, 0, 1, 0, 4, 0, 1,],
+                [1, 0, 0, 2, 0, 1, 2, 1, 0, 2, 2, 2, 1, 2, 4, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1,],
+                [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 4, 1, 0, 0, 0, 0, 2, 2, 1,],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1,],
+                [1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 2, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1,],
+                [1, 0, 2, 2, 1, 0, 0, 2, 2, 4, 1, 4, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 1, 1, 0, 4, 0, 0, 1,],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,]
             ],
             [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 2, 1],
-                [1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0],
-                [1, 0, 0, 2, 0, 1, 2, 1, 1, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0],
-                [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1],
-                [1, 2, 1, 0, 0, 1, 0, 2, 0, 0, 1, 3, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+                [5, 0, 0, 0, 0, 0, 0, 5, 5, 5, 0, 2, 5],
+                [5, 0, 5, 5, 5, 5, 0, 5, 5, 0, 0, 5, 5],
+                [5, 0, 0, 2, 0, 5, 2, 5, 5, 0, 0, 0, 5, 5],
+                [5, 5, 5, 5, 0, 5, 5, 5, 5, 0, 5, 5, 5],
+                [5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 5],
+                [5, 0, 5, 5, 5, 5, 0, 5, 5, 5, 5, 0, 5],
+                [5, 2, 5, 0, 0, 5, 0, 2, 0, 0, 5, 3, 5],
+                [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
             ],
             [
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 2, 1],
-                [1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0],
-                [1, 0, 0, 2, 0, 1, 2, 1, 1, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0],
-                [1, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1],
-                [1, 2, 1, 0, 0, 1, 0, 2, 0, 0, 1, 3, 1],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 ,6, 6, 6, 6, 6, 6, 6, 6, 6 ,6 ,6, 6, 6 ,6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+                [6, 0, 0, 0, 0, 2, 6, 4, 0, 0, 0, 0, 2, 6, 0 ,2, 0, 6, 2, 0, 0, 0, 0, 0, 0, 6, 6, 0, 2, 0, 0, 6, 6, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 6],
+                [6, 0, 0, 0, 0, 4, 6, 6, 0, 0, 0, 4, 0, 0, 0 ,6, 0, 6, 6, 0, 0, 0, 0, 4, 0, 0, 6, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 4, 0, 4, 0, 4, 0, 4, 0, 6],
+                [6, 6, 6, 0, 6, 6, 6, 0, 0, 2, 6, 6, 0, 0, 6, 0, 0, 6, 0, 0, 6, 4, 6, 6, 6, 0, 0 ,0, 0, 0, 0, 2, 0, 2, 0, 6, 0, 6, 6, 6, 6, 6, 6, 6, 6, 0, 6],
+                [6, 0, 0, 0, 0, 0, 0, 0, 2, 6, 0, 6, 4, 6, 6, 0, 6, 2, 0, 0, 0, 6, 6, 6, 6, 6, 6, 6, 0, 6, 0, 6, 0, 6, 0, 0, 0, 0, 6, 3, 0, 0, 0, 0, 0, 0, 6],
+                [6, 0, 0, 0, 4, 0, 0, 0, 6, 0, 2, 6, 6, 0, 0, 0, 6, 6, 6, 2, 0, 0, 0, 0, 0, 0, 2, 6, 0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+                [6, 0, 6, 6, 6, 0, 6, 0, 0, 0, 0, 6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 2, 6, 6, 0, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+                [6, 2, 6, 2, 0, 0, 0, 0, 0, 4, 6, 6, 6, 2, 4, 2, 4, 2, 0, 6, 2, 0, 6, 6, 6, 4, 0, 4, 6, 0, 0, 0 ,0, 0, 0, 0, 0, 0, 2, 0, 2, 4, 0, 2, 4, 2, 6],
+                [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 ,6, 6, 6, 6, 6, 6, 6, 6, 6 ,6 ,6, 6, 6 ,6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+                 ],
             ]
-        ]
-        with open('data\game.json', 'r') as file:
+
+        with open('/Users/gastonguelmami/Desktop/maze_game-main/data/game.json', 'r') as file:
             data = json.load(file)
             self.player = Player(100, 100, 50, 50, window, data['selected_character'])
         self.enemies_group = pygame.sprite.Group()
@@ -69,7 +78,7 @@ class Game:
         self.scroll_area_width = 200
         self.load_level()
         self.healthbar = HealthBar(20, 20, 200, 30, 100)
-        with open('data\game.json', 'r') as file:
+        with open('/Users/gastonguelmami/Desktop/maze_game-main/data/game.json', 'r') as file:
             data = json.load(file)
             self.coin_counter = CoinCounter(WIDTH - self.block_size * 2, 0, self.block_size, data['coins'])
         self.level_indicator = LevelIndicator(WIDTH - 100, HEIGHT - 30, self.level + 1)
@@ -89,6 +98,13 @@ class Game:
                 elif self.mazes[self.level][i][j] == 4:
                     blob = Enemy(j * self.block_size, i * self.block_size + 290)
                     self.enemies_group.add(blob)
+                elif self.mazes[self.level][i][j] == 5:
+                    self.objects.append(Block2(j * self.block_size, i * self.block_size, self.block_size))
+                elif self.mazes[self.level][i][j] == 6:
+                    self.objects.append(Block3(j * self.block_size, i * self.block_size, self.block_size))
+                # elif self.mazes[self.level][i][j] == 7:
+                #      self.objects.append(Heart(j * self.block_size, i * self.block_size, self.block_size))
+        self.objects.append(self.fire)
         self.objects.append(self.fire)
         
 
@@ -109,6 +125,7 @@ class Game:
             self.load_level()
         else:
             print("You've completed all levels!")
+            win_animation(self.window, self.clock, self.fps) 
 
     def draw(self, window):    
         window.fill(BLACK)
