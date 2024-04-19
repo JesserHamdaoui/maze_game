@@ -9,7 +9,7 @@ from game.user_interface.CoinCounter import CoinCounter
 
 def shop_menu(window, clock):
     return_button = pygame.Rect(WIDTH//2 - 100, HEIGHT - 100, 200, 50)
-    with open('/Users/gastonguelmami/Desktop/maze_game-main/data/game.json', 'r') as file:
+    with open('data\game.json', 'r') as file:
         data = json.load(file)
         coin_counter = CoinCounter(WIDTH - 96 * 2, 0, 96, data['coins'])
     
@@ -25,7 +25,7 @@ def shop_menu(window, clock):
                     return  # Return to the main menu
                 for item in shop_items:
                     if item.rect.collidepoint(event.pos):
-                        with open('/Users/gastonguelmami/Desktop/maze_game-main/data/game.json', 'r+') as file:
+                        with open('data\game.json', 'r+') as file:
                             if data['coins'] < item.price:
                                 print("Not enough coins")
                                 continue

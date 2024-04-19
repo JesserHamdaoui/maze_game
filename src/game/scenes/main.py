@@ -6,7 +6,7 @@ from game.utilities.sound import jump_fx, game_over_fx
 from game.utilities.movement import handle_move
 
 def main(window, clock = pygame.time.Clock(), main_character = "VirtualGuy"):
-    game = Game(window, clock, FPS, main_character)
+    game = Game(window, main_character)
     game.load_level()
 
     run = True
@@ -60,7 +60,7 @@ def main(window, clock = pygame.time.Clock(), main_character = "VirtualGuy"):
                         
 
             def draw_restart_button():
-                restart_img = pygame.image.load(os.path.join('/Users/gastonguelmami/Desktop/maze_game-main/assets/images/user-interface/Menu/Buttons/Restart.png'))
+                restart_img = pygame.image.load(os.path.join('assets', 'images', 'user_interface', 'Menu', 'Buttons','Restart.png'))
                 window.blit(restart_img, (WIDTH//2 - restart_img.get_width()//2, HEIGHT//2 + 100))
             draw_restart_button()  # Display the restart button
             pygame.display.update()  # Update the display

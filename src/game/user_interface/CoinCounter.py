@@ -20,7 +20,7 @@ class CoinCounter(Object):
     def increase_count(self, score=1):
         self.count += score
         # Update the coin count in the game.json file
-        with open('/Users/gastonguelmami/Desktop/maze_game-main/data/game.json', 'r+') as file:
+        with open('data\game.json', 'r+') as file:
             data = json.load(file)
             data['coins'] += score
             file.seek(0)
