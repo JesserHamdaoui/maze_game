@@ -1,9 +1,10 @@
 {
     "level": 0,
-    "coins": 62,
+    "coins": 52,
     "characters": [
         "VirtualGuy",
-        "MaskDude"
+        "MaskDude",
+        "NinjaFrog"
     ],
     "selected_character": "MaskDude"
 }

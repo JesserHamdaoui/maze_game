@@ -4,7 +4,7 @@ from game.entities.Game import Game
 from game.utilities.sound import jump_fx, game_over_fx
 from game.utilities.movement import handle_move
 from game.user_interface.buttons import ReturnButton
-from game.utilities.constants import font
+from game.utilities.game_over import game_over_animation
 
 def main(window, main_character="VirtualGuy"):
     clock = pygame.time.Clock()
@@ -56,21 +56,9 @@ def main(window, main_character="VirtualGuy"):
             game.player.alive = False
             game.player.draw(window, game.offset_x)
             game_over_fx.play()
-            restart_button.draw(window)
-            pygame.display.update()
-
-            while True:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        quit()
-                    elif event.type == pygame.MOUSEMOTION:
-                        restart_button.hover()
-                    elif event.type == pygame.MOUSEBUTTONDOWN:
-                        print("clicked")
-                        if restart_button.is_over(event.pos):
-                            run = False
-                            break
+            run = game_over_animation(window, clock, FPS)
+            break
+        
         else:
             game.draw(window, restart_button)
 
