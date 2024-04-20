@@ -19,7 +19,7 @@ if __name__ == "__main__":
         choice = main_menu(window)
         if choice == "play":
             main(window)
-            break
+            main_menu(window)
         elif choice == "shop":
             if shop_menu(window, clock) == "menu":
-                main_menu(window, clock)
+                main_menu(window)

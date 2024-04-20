@@ -6,9 +6,10 @@ from game.utilities.constants import *
 from config.settings import WIDTH, HEIGHT
 from game.scenes.main import main
 from game.user_interface.CoinCounter import CoinCounter
+from game.user_interface.buttons import ReturnButton
 
 def shop_menu(window, clock):
-    return_button = pygame.Rect(WIDTH//2 - 100, HEIGHT - 100, 200, 50)
+    return_button = ReturnButton(WIDTH - 200, HEIGHT - 100, 200, 50, LIGHT_BLUE)
     with open('data\game.json', 'r') as file:
         data = json.load(file)
         coin_counter = CoinCounter(WIDTH - 96 * 2, 0, 96, data['coins'])
@@ -20,9 +21,12 @@ def shop_menu(window, clock):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+
+            elif event.type == pygame.MOUSEMOTION:
+                return_button.hover(event.pos)
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if return_button.collidepoint(event.pos):
-                    return  # Return to the main menu
+                if return_button.is_over(event.pos):
+                    return
                 for item in shop_items:
                     if item.rect.collidepoint(event.pos):
                         with open('data\game.json', 'r+') as file:
@@ -58,9 +62,7 @@ def shop_menu(window, clock):
             x += 300
 
         # Draw return button
-        pygame.draw.rect(window, LIGHT_BLUE, return_button)
-        return_text = font.render("Return", True, WHITE)
-        window.blit(return_text, (return_button.x + 50, return_button.y + 10))
+        return_button.draw(window)
         
         coin_counter.loop()
         coin_counter.draw(window)
